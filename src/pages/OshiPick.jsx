@@ -77,7 +77,7 @@ export default function OshiPick() {
 
                         {/* App Mockup Image */}
                         <div className="md:w-1/2 relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-                            <div className="relative z-10 mx-auto w-[300px] md:w-[500px] rotate-[-6deg] hover:rotate-0 transition-transform duration-500">
+                            <div className="relative z-10 mx-auto w-[320px] md:w-[700px] rotate-[-6deg] hover:rotate-0 transition-transform duration-500">
                                 <img
                                     src="/product_app_final.jpg"
                                     alt="App Screen"
