@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import emailjs from '@emailjs/browser';
 
 const ContactForm = () => {
     const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ const ContactForm = () => {
         phone: '',
         content: ''
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -17,25 +19,38 @@ const ContactForm = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
-        // メール本文の作成
-        const subject = `[HPお問い合わせ] ${formData.company} ${formData.name}様より`;
-        const body = `
-お問い合わせ内容：
+        try {
+            await emailjs.send(
+                'service_7gcmmio',
+                'template_contact_form',
+                {
+                    company: formData.company,
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    content: formData.content,
+                },
+                'tuxKBzBYgZnkIZYu8'
+            );
 
-会社名: ${formData.company}
-お名前: ${formData.name}
-メールアドレス: ${formData.email}
-電話番号: ${formData.phone}
-
-お問い合わせ内容:
-${formData.content}
-    `;
-
-        // mailtoリンクの作成と実行
-        window.location.href = `mailto:info@switch-media-jp.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            alert('お問い合わせを受け付けました。担当者よりご連絡させていただきます。');
+            setFormData({
+                company: '',
+                name: '',
+                email: '',
+                phone: '',
+                content: ''
+            });
+        } catch (error) {
+            console.error('EmailJS Error:', error);
+            alert('送信に失敗しました。申し訳ありませんが、時間をおいて再度お試しいただくか、直接メールにてお問い合わせください。');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -123,8 +138,12 @@ ${formData.content}
 
             {/* Submit Button */}
             <div className="pt-4">
-                <button type="submit" className="w-full bg-[#10b981] text-white font-bold py-4 rounded-md hover:bg-[#059669] transition-colors shadow-lg shadow-emerald-100">
-                    確認する
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#10b981] text-white font-bold py-4 rounded-md hover:bg-[#059669] transition-colors shadow-lg shadow-emerald-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {isSubmitting ? '送信中...' : '送信する'}
                 </button>
             </div>
 
